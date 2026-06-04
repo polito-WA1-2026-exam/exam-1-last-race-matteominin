@@ -1,27 +1,52 @@
-// imports
 import express from "express";
 import morgan from "morgan";
-import globalErrorHandler from "./middleware/errorHandler.js";
 import ApiException from "./models/ApiException.js";
+
+// AUTH Imports
+import passport from "passport";
+import session from "express-session";
+import passportConfig from "./config/passportConfig.js";
+
+// MIDDLEWARE Imports
+import globalErrorHandler from "./middleware/errorHandler.js";
+
+// ROUTES Imports
+import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
-// init express
 const app = express();
 const port = 3001;
 
-// middlewares
 app.use(morgan('dev'));
 app.use(express.json());
 
-// catch non existing endpoints
+// PASSPORT CONFIG
+app.use(session({
+	secret: 'session-secret-key',
+	resave: false,
+	saveUninitialized: false
+}))
+app.use(passport.authenticate("session"));
+
+passportConfig();
+
+// ROUTES
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/sessions", authRoutes);
+
 app.use((req, res, next) => {
-  throw new ApiException(404, `Endpoint ${req.method} ${req.url} not found`);
+	throw new ApiException(404, `Endpoint ${req.method} ${req.url} not found`);
 })
 
-// global error handler
+// GLOBAL ERROR HANDLER
 app.use(globalErrorHandler);
 
-// activate the server
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+// START SERVER
+app.listen(port, (err) => {
+	if (err) {
+		console.error("Error starting server:", err);
+		return;
+	}
+
+	console.log(`Server listening at http://localhost:${port}`);
 });
