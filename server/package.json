@@ -7,9 +7,16 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "dayjs": "^1.11.21",
+    "express": "^5.2.1",
+    "morgan": "^1.11.0",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
