@@ -35,7 +35,23 @@ class GameDAO {
                 resolve(game);
             })
         });
+    }
 
+    updateGame(game) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                UPDATE games
+                SET status = ?, coins = ?, route = ?
+                WHERE id = ?;
+            `;
+
+            const {id, status, coins, route} = game;
+
+            db.run(query, [status, coins, route, id], (err) => {
+                if (err) return reject(err);
+                resolve(game);
+            })
+        })
     }
     
     getActiveGameByPlayerId(playerId) {

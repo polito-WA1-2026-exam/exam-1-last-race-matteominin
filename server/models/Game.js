@@ -7,7 +7,7 @@ export const GameStatus = Object.freeze({
 });
 
 class Game {
-    constructor({id = null, status = GameStatus.STARTED, playerId, startStationId = null, endStationId = null, coins = 20, route = null, date}) {
+    constructor({id = null, status = GameStatus.STARTED, playerId, startStationId, endStationId, coins = 20, route = null, date}) {
         this.id = id;
         this.status = status;
         this.playerId = playerId;
@@ -15,7 +15,7 @@ class Game {
         this.endStationId = endStationId;
         this.coins = coins;
         this.route = route;
-        this.date = date ? dayjs(date) : dayjs();
+        this.date = date ? dayjs(date).toISOString() : dayjs().toISOString();
     }
 }
 
