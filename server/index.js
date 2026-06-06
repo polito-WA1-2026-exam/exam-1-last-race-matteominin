@@ -9,6 +9,7 @@ import passportConfig from "./config/passportConfig.js";
 
 // MIDDLEWARE Imports
 import globalErrorHandler from "./middleware/errorHandler.js";
+import authMiddleware from "./middleware/authMiddleware.js";
 
 // ROUTES Imports
 import authRoutes from "./routes/authRoutes.js";

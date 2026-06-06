@@ -1,9 +1,11 @@
-import ApiException from "../models/ApiException";
+import ApiException from "../models/ApiException.js";
 
-export default authMiddleware = (req, res, next) => {
-    if (req.isAuthenticated) {
+const authMiddleware = (req, res, next) => {
+    if (req.isAuthenticated()) {
         return next();
     }
 
     throw new ApiException(401, "Unauthorized");
 }
+
+export default authMiddleware;
