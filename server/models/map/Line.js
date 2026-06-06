@@ -1,5 +1,5 @@
 class Line {
-    constructor(id, name, color) {
+    constructor(id, name) {
         this.id = id;
         this.name = name;
     }

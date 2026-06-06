@@ -11,6 +11,34 @@ const rowsToSegments = (rows) => {
     return rows.map(row => new Segment(row.id, row.station1_id, row.station2_id, row.line_id));
 }
 
+const rowsToMap = (rows) => {
+    const linesMap = new Map();
+    const stationsMap = new Map();
+    const segmentsList = [];
+
+    rows.forEach(row => {
+        if (!stationsMap.has(row.stat1_id)) {
+            stationsMap.set(row.stat1_id, new Station(row.stat1_id, row.stat1_name));
+        }
+
+        if (!stationsMap.has(row.stat2_id)) {
+            stationsMap.set(row.stat2_id, new Station(row.stat2_id, row.stat2_name));
+        }
+
+        if (!linesMap.has(row.line_id)) {
+            linesMap.set(row.line_id, new Line(row.line_id, row.line_name));
+        }
+
+        segmentsList.push(new Segment(row.id, row.stat1_id, row.stat2_id, row.line_id));
+    })
+
+    return {
+        lines: Array.from(linesMap.values()),
+        stations: Array.from(stationsMap.values()),
+        segments: segmentsList
+    }
+}
+
 class MapDAO {
     getSegments() {
         return new Promise((resolve, reject) => {
@@ -52,32 +80,7 @@ class MapDAO {
 
             db.all(query, (err, rows) => {
                 if (err) return reject(err);
-
-                const stationsMap = new Map();
-                const linesMap = new Map();
-                const segmentsList = [];
-
-                rows.forEach(r => {
-                    if (!stationsMap.has(r.stat1_id)) {
-                        stationsMap.set(r.stat1_id, {id: r.stat1_id, name: r.stat1_name});
-                    }
-
-                    if (!stationsMap.has(r.stat2_id)) {
-                        stationsMap.set(r.stat2_id, {id: r.stat2_id, name: r.stat2_name});
-                    }
-
-                    if (!linesMap.has(r.line_id)) {
-                        linesMap.set(r.line_id, r.line_name);
-                    }
-
-                    segmentsList.push({id: r.segment_id, lineId: r.line_id, st1: r.stat1_id, st2: r.stat2_id})
-                })
-
-                resolve({
-                    stations: Array.from(stationsMap.values()),
-                    lines: Object.fromEntries(linesMap),
-                    segments: segmentsList
-                });
+                resolve(rowsToMap(rows));
             })
         })
     }
