@@ -14,6 +14,7 @@ import authMiddleware from "./middleware/authMiddleware.js";
 // ROUTES Imports
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import mapRouter from "./routes/mapRouter.js";
 import gameRoutes from "./routes/gameRoutes.js";
 
 const app = express();
@@ -35,6 +36,7 @@ passportConfig();
 // ROUTES
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/sessions", authRoutes);
+app.use("/api/v1", mapRouter);
 app.use("/api/v1/games", gameRoutes);
 
 app.use((req, res, next) => {
