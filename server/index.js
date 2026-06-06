@@ -16,6 +16,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import mapRouter from "./routes/mapRouter.js";
 import gameRoutes from "./routes/gameRoutes.js";
+import leaderboardRoutes from "./routes/leaderboardRoutes.js"
 
 const app = express();
 const port = 3001;
@@ -36,8 +37,9 @@ passportConfig();
 // ROUTES
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/sessions", authRoutes);
-app.use("/api/v1", mapRouter);
+app.use("/api/v1/map", mapRouter);
 app.use("/api/v1/games", gameRoutes);
+app.use("/api/v1/leaderboard", leaderboardRoutes);
 
 app.use((req, res, next) => {
 	throw new ApiException(404, `Endpoint ${req.method} ${req.url} not found`);

@@ -80,6 +80,27 @@ class GameDAO {
             })
         })    
     }
+
+    getLeaderboard(limit = 10) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT 
+                    u.username,
+                    MAX(g.coins) AS record
+                FROM games g
+                JOIN users u ON g.player_id = u.id
+                WHERE status = ?
+                GROUP BY u.id
+                ORDER BY record DESC
+                LIMIT ?
+            `;
+
+            db.all(query, [GameStatus.WON, limit], (err, rows) => {
+                if (err) return reject(err);
+                resolve(rows);  // TODO: rows mapping
+            })
+        })
+    }
 }
 
 export default GameDAO;

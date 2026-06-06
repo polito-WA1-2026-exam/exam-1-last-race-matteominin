@@ -6,7 +6,7 @@ const router = express.Router();
 
 const mapDAO = new MapDAO();
 
-router.get("/map", authMiddleware, async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
     const map = await mapDAO.getMap();
     res.json(map);
 })
