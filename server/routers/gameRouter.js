@@ -5,6 +5,7 @@ import GameDAO from "../dao/GameDAO.js";
 import Game from "../models/Game.js";
 import MapDAO from "../dao/mapDAO.js";
 import EventDAO from "../dao/eventDAO.js";
+import { GameStatus } from "../models/Game.js";
 import { calculateDistance } from "../utils/graphUtils.js";
 
 const router = express.Router();
@@ -63,15 +64,16 @@ router.put("/current", authMiddleware, async (req, res) => {
         throw new ApiException(404, "Player doesn't have any active game");
     }
 
-    const { routes } = req.body;
+    const { route } = req.body;
     activeGame.route = route;
 
     let validRoute = false; 
     // TODO: valide routes
 
+    // TODO: store events
     if (validRoute) {
         const events = await eventDAO.getEvents();
-        for (const route of routes) {
+        for (const segment of route) {
             const event = events[Math.floor(Math.random() * events.length)];
             activeGame.coins += event.effect;
         }
