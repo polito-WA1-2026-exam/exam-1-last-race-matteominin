@@ -5,47 +5,18 @@ import GameDAO from "../dao/GameDAO.js";
 import Game from "../models/Game.js";
 import MapDAO from "../dao/mapDAO.js";
 import EventDAO from "../dao/eventDAO.js";
+import GameService from "../services/gameService.js";
 import { GameStatus } from "../models/Game.js";
-import { calculateDistance } from "../utils/graphUtils.js";
 
 const router = express.Router();
 
 const gameDAO = new GameDAO();
-const mapDAO = new MapDAO();
-const eventDAO = new EventDAO();
+const gameService = new GameService(gameDAO, new MapDAO(), new EventDAO());
 
 router.post("/", authMiddleware, async (req, res) => {
-    const activeGame = await gameDAO.getActiveGameByPlayerId(req.user.id);
-
-    if (activeGame) {
-        throw new ApiException(400, "Player already has an active game");
-    }
-
-    const map = await mapDAO.getMap();
-
-    let distance = 0;
-    let station1, station2;
-
-    while (distance < 3) {
-        station1 = map.stations[Math.floor(Math.random() * map.stations.length)];
-        station2 = map.stations[Math.floor(Math.random() * map.stations.length)];
-
-        if (station1.id === station2.id) {
-            continue;
-        }
-
-        distance = calculateDistance(station1.id, station2.id, map.segments);
-    }
-
-    const game = new Game({
-        playerId: req.user.id,
-        startStationId: station1.id,
-        endStationId: station2.id
-    });
-
-    const newGame = await gameDAO.createGame(game);
-    res.status(201).json(newGame);
-})
+    const game = await gameService.startNewGame(req.user.id);
+    res.status(201).json(game);
+});
 
 router.get("/current", authMiddleware, async (req, res) => {
     const activeGame = await gameDAO.getActiveGameByPlayerId(req.user.id);
@@ -58,33 +29,9 @@ router.get("/current", authMiddleware, async (req, res) => {
 })
 
 router.put("/current", authMiddleware, async (req, res) => {
-    const activeGame = await gameDAO.getActiveGameByPlayerId(req.user.id);
-
-    if (!activeGame) {
-        throw new ApiException(404, "Player doesn't have any active game");
-    }
-
     const { route } = req.body;
-    activeGame.route = route;
-
-    let validRoute = false; 
-    // TODO: valide routes
-
-    // TODO: store events
-    if (validRoute) {
-        const events = await eventDAO.getEvents();
-        for (const segment of route) {
-            const event = events[Math.floor(Math.random() * events.length)];
-            activeGame.coins += event.effect;
-        }
-    } else {
-        activeGame.coins = 0;
-    }
-
-    activeGame.status = activeGame.coins > 0 ? GameStatus.WON : GameStatus.LOST;
-
-    const updatedGame = await gameDAO.updateGame(activeGame);
-    res.json(updatedGame);
+    const result = await gameService.verifyAndUpdateGame(req.user.id, route);
+    res.json(result);
 })
 
 export default router;

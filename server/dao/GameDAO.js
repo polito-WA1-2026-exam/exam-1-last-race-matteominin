@@ -97,7 +97,11 @@ class GameDAO {
 
             db.all(query, [GameStatus.WON, limit], (err, rows) => {
                 if (err) return reject(err);
-                resolve(rows);  // TODO: rows mapping
+                const leaderboard = rows.map(row => ({
+                    username: row.username,
+                    record: row.record
+                }));
+                resolve(leaderboard);
             })
         })
     }

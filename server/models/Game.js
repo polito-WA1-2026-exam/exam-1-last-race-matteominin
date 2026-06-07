@@ -14,8 +14,19 @@ class Game {
         this.startStationId = startStationId;
         this.endStationId = endStationId;
         this.coins = coins;
-        this.route = route;
+        this.route = typeof route === "string" ? JSON.parse(route) : route;
         this.date = date ? dayjs(date).toISOString() : dayjs().toISOString();
+    }
+
+    invalidate() {
+        this.status = GameStatus.LOST;
+        this.coins = 0;
+    }
+
+    finalizeScore(route) {
+        this.coins = this.coins > 0 ? this.coins : 0;
+        this.status = this.coins > 0 ? GameStatus.WON : GameStatus.LOST;
+        this.route = typeof route === "string" ? JSON.parse(route) : route;
     }
 }
 
