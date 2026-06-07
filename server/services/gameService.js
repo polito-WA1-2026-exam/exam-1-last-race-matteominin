@@ -56,7 +56,7 @@ class GameService {
         // TODO: check submission time
 
         const map = await this.mapDAO.getMap();
-        const isValidRoute = isRouteValid(route, map.segments);
+        const isValidRoute = this._isRouteValid(activeGame, route, map.segments);
         
         let steps = [];
         const events = await this.eventDAO.getEvents();
@@ -72,6 +72,38 @@ class GameService {
             game: updatedGame,
             steps
         };
+    }
+
+    _isRouteValid(activeGame, route, segments) {
+        if (!route || !Array.isArray(route) || route.length < 2) {
+            return false;
+        }
+
+        if (route[0] !== activeGame.startStationId || route[route.length - 1] !== activeGame.endStationId) {
+            return false;
+        }
+
+        const visitedSegments = new Set();
+        for (let i = 0; i < route.length - 1; i++) {
+            const currentStationId = route[i];
+            const nextStationId = route[i + 1];
+            const segment = segments.find(s => {
+                return (s.station1_id === currentStationId && s.station2_id === nextStationId) ||
+                    (s.station1_id === nextStationId && s.station2_id === currentStationId);
+            })
+            
+            if (!segment) {
+                return false;
+            }
+
+            const segmentKey = `${Math.min(currentStationId, nextStationId)}-${Math.max(currentStationId, nextStationId)}`;
+            if (visitedSegments.has(segmentKey)) {
+                return false;
+            }
+            visitedSegments.add(segmentKey);
+        }
+
+        return true;
     }
 
     async _executeRoute(activeGame, route, events) {

@@ -31,31 +31,3 @@ export const calculateDistance = (startId, endId, segments) => {
     
     return -1;
 }
-
-export const isRouteValid = (route, segments) => {
-    if (!route || !Array.isArray(route) || route.length < 2) {
-        return false;
-    }
-    
-    const visitedSegments = new Set();
-    for (let i = 0; i < route.length - 1; i++) {
-        const currentStationId = route[i];
-        const nextStationId = route[i + 1];
-        const segment = segments.find(s => {
-            return (s.station1_id === currentStationId && s.station2_id === nextStationId) ||
-                (s.station1_id === nextStationId && s.station2_id === currentStationId);
-        })
-        
-        if (!segment) {
-            return false;
-        }
-
-        const segmentKey = `${Math.min(currentStationId, nextStationId)}-${Math.max(currentStationId, nextStationId)}`;
-        if (visitedSegments.has(segmentKey)) {
-            return false;
-        }
-        visitedSegments.add(segmentKey);
-    }
-
-    return true;
-}
