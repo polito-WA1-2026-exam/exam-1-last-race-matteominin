@@ -13,7 +13,6 @@ import authMiddleware from "./middleware/authMiddleware.js";
 
 // ROUTERS Imports
 import authRouter from "./routers/authRouter.js";
-import userRouter from "./routers/userRouter.js";
 import mapRouter from "./routers/mapRouter.js";
 import gameRouter from "./routers/gameRouter.js";
 import leaderboardRouter from "./routers/leaderboardRouter.js"
@@ -35,7 +34,6 @@ app.use(passport.authenticate("session"));
 passportConfig();
 
 // ROUTES
-app.use("/api/v1/users", userRouter);
 app.use("/api/v1/sessions", authRouter);
 app.use("/api/v1/map", mapRouter);
 app.use("/api/v1/games", gameRouter);

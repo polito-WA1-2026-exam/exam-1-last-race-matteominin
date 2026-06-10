@@ -1,6 +1,6 @@
 import ApiException from "../models/ApiException.js";
 import Game from "../models/Game.js";
-import { calculateDistance, isRouteValid } from "../utils/graphUtils.js";
+import { calculateDistance } from "../utils/graphUtils.js";
 
 class GameService {
     constructor(gameDAO, mapDAO, eventDAO) {
