@@ -1,5 +1,6 @@
 import express from "express";
 import morgan from "morgan";
+import cors from "cors";
 import ApiException from "./models/ApiException.js";
 
 // AUTH Imports
@@ -19,6 +20,13 @@ import leaderboardRouter from "./routers/leaderboardRouter.js"
 
 const app = express();
 const port = 3001;
+
+const corsOptions = {
+	origin: 'http://localhost:5173',
+	credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.use(morgan('dev'));
 app.use(express.json());
