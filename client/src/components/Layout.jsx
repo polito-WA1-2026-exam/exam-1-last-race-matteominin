@@ -9,9 +9,12 @@ const Layout = () => {
             <Navbar bg="dark" data-bs-theme="dark">
                 <Container>
                     <Navbar.Brand href="/">Last Race</Navbar.Brand>
-                    <Nav className="ms-auto">
+                    <Nav className="ms-auto w-100">
                         {user ? (
                             <>
+                                <Nav.Link className="text-muted me-auto" href="/leaderboard">
+                                    Leaderboard
+                                </Nav.Link>
                                 <Navbar.Text className="me-3">
                                     Welcome, <strong className="ms-1 text-white">{user.username}</strong>
                                 </Navbar.Text>
@@ -20,7 +23,7 @@ const Layout = () => {
                                 </Button>
                             </>
                         ) : (
-                            <Nav.Link href="/login">Login</Nav.Link>
+                            <Nav.Link className="ms-auto" href="/login">Login</Nav.Link>
                         )}
                     </Nav>
                 </Container>
