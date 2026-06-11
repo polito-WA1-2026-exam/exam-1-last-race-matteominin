@@ -6,7 +6,6 @@ const Leaderboard = () => {
     const [leaderboard, setLeaderboard] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    // TODO: check if this should be an authenticated route
 
     useEffect(() => {
         const fetchLeaderboard = async () => {

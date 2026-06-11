@@ -7,6 +7,7 @@ import Layout from './components/Layout.jsx';
 import Login from './components/Login.jsx';
 import Home from './components/Home.jsx';
 import Leaderboard from './components/Leaderbord.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 import NotFound from './components/NotFound.jsx';
 
 function App() {
@@ -17,7 +18,11 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
-          <Route path="leaderboard" element={<Leaderboard/>} />
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="leaderboard" element={<Leaderboard/>} />
+          </Route>
+          
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
