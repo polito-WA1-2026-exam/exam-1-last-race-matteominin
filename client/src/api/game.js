@@ -58,7 +58,8 @@ const getMap = async () => {
 
 const verifyAndUpdate = async (route) => {
     const response = await client.request('/games/current', {
-        method: 'PUT'
+        method: 'PUT',
+        body: JSON.stringify(route)
     });
 
     if (!response.ok) {

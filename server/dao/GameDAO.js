@@ -84,7 +84,7 @@ class GameDAO {
 
             const {id, status, coins, route} = game;
 
-            db.run(query, [status, coins, route, id], (err) => {
+            db.run(query, [status, coins, JSON.stringify(route), id], (err) => {
                 if (err) return reject(err);
                 resolve(game);
             })

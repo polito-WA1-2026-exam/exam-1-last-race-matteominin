@@ -55,11 +55,10 @@ const Game = () => {
         }
     }
 
-    const submitRoute = async () => {
-        console.log("Submitting route...");
+    const submitRoute = async (route) => {
         setLoading(true);
         try {
-            const updatedGame = await gameAPI.verifyAndUpdate();
+            const updatedGame = await gameAPI.verifyAndUpdate(route);
             setGameData(updatedGame);
         } catch (err) {
             setError(err.message);
@@ -84,8 +83,12 @@ const Game = () => {
     if (gameData.status === 'SETUP') {
         return <GameSetup startGame={startGame}/>;
     } else if (gameData.status === 'STARTED') {
-        return <GamePlanning game={gameData} map={mapData} submitRoute={submitRoute} />;
-    } else if (gameData.status === 'WON' || gameData.game.status === 'LOST') {
+        return <GamePlanning 
+            game={gameData} 
+            map={mapData} 
+            submitRoute={submitRoute}   
+        />;
+    } else if (gameData.status === 'WON' || gameData.status === 'LOST') {
         return <GameResults />;
     } else {
         return (

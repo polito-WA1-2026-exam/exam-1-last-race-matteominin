@@ -32,7 +32,7 @@ router.put("/:id/start", authMiddleware, async (req, res) => {
 })
 
 router.put("/current", authMiddleware, async (req, res) => {
-    const { route } = req.body;
+    const route = req.body;
     const result = await gameService.verifyAndUpdateGame(req.user.id, route);
     res.json(result);
 })

@@ -1,10 +1,11 @@
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { Container, Button, Image, Badge, Card } from 'react-bootstrap';
-import mapMuted from '../../assets/map2.jpg'; 
+import { Container, Button, Col, Card, Badge, Row} from 'react-bootstrap';
+import AvailableConnections from './components/AvailableConnections.jsx';
+import SelectedRoute from './components/SelectedRoute.jsx'
 
 const GamePlanning = ({game, map, submitRoute}) => {
-    const timeLimit = 10; 
+    const timeLimit = 100000; 
 
     const [timeLeft, setTimeLeft] = useState(() => {
         const now = dayjs();
@@ -12,6 +13,8 @@ const GamePlanning = ({game, map, submitRoute}) => {
         const elapsed = now.diff(start, 'second');
         return Math.max(timeLimit - elapsed, 0);
     });
+
+    const [selectedSegments, setSelectedSegments] = useState([]);
 
     useEffect(() => {
         if (timeLeft <= 0) return;
@@ -34,13 +37,30 @@ const GamePlanning = ({game, map, submitRoute}) => {
 
     useEffect(() => {
         if (timeLeft <=0) {
-            submitRoute();
+            submitRoute(selectedSegments);
         }
     }, [timeLeft])
 
-    const getStation = (id, stations) => {
+    const getStationName = (id, stations) => {
         const station = stations.find(s => s.id === id);
         return station.name;
+    }
+
+    const getLineName = (lineId) => {
+        const line = map.lines.find(l => l.id === lineId);
+        return line ? line.name : `Linea ${lineId}`;
+    };
+
+    const resetSegments = () => {
+        setSelectedSegments([]);
+    }
+
+    const addSegment = (segment) => {
+        setSelectedSegments([...selectedSegments, segment]);
+    }
+
+    const removeSegment = (segment) => {
+        setSelectedSegments(prev => prev.filter(s => s.id !== segment.id));
     }
 
     return (
@@ -66,30 +86,49 @@ const GamePlanning = ({game, map, submitRoute}) => {
             <Card className="mb-4 py-3 bg-light d-flex flex-row justify-content-around align-items-center">
                 <div>
                     <small className="text-muted d-block fw-bold">DEPARTURE</small>
-                    <Badge bg="primary" className="fs-5 px-4">{getStation(game.startStationId, map.stations)}</Badge>
+                    <Badge bg="primary" className="fs-5 px-4">{getStationName(game.startStationId, map.stations)}</Badge>
                 </div>
                 
                 <i className="bi bi-arrow-right fs-3"></i>
                 
                 <div>
                     <small className="text-muted d-block fw-bold">ARRIVAL</small>
-                    <Badge bg="danger" className="fs-5 px-4">{getStation(game.endStationId, map.stations)}</Badge>
+                    <Badge bg="danger" className="fs-5 px-4">{getStationName(game.endStationId, map.stations)}</Badge>
                 </div>
             </Card>
 
+            <Row className="g-4 mb-4">
+    
+                <Col md={6}>
+                    <AvailableConnections 
+                        map={map} 
+                        selectedSegments={selectedSegments} 
+                        getStationName={getStationName}
+                        getLineName={getLineName}
+                        timeLeft={timeLeft}
+                        addSegment={addSegment}
+                    />
+                </Col>
 
-            <Image 
-                src={mapMuted} 
-                alt="Network Map without segments"  
-                thumbnail
-                style={{ maxHeight: '60vh', objectFit: 'contain' }}
-            />
+
+                <Col md={6}>
+                    <SelectedRoute 
+                        map={map} 
+                        selectedSegments={selectedSegments} 
+                        getStationName={getStationName}
+                        getLineName={getLineName}
+                        timeLeft={timeLeft}
+                        removeSegment={removeSegment}
+                    />
+                </Col>
+            </Row>
 
             <div className="mt-4 d-flex gap-3 justify-content-center">
                 <Button 
                     variant="secondary" 
                     size="lg" 
                     className="px-4"
+                    onClick={resetSegments}
                 >
                     <i className="bi bi-arrow-counterclockwise"></i>
                 </Button>
@@ -98,7 +137,7 @@ const GamePlanning = ({game, map, submitRoute}) => {
                     variant="success" 
                     size="lg" 
                     className="fw-bold px-5 py-3"
-                    onClick={submitRoute}
+                    onClick={() => submitRoute(selectedSegments)}
                 >
                     Confirm Route
                     <i className="bi bi-check-circle ms-3"></i>

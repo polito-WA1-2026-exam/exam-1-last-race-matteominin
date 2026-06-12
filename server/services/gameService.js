@@ -85,12 +85,12 @@ class GameService {
             steps = this._executeRoute(activeGame, route, events);
             activeGame.finalizeScore(route);
         } else {
-            activeGame.invalidate();
+            activeGame.invalidate(route);
         }
     
         const updatedGame = await this.gameDAO.updateGame(activeGame);
         return {
-            game: updatedGame,
+            ...updatedGame,
             steps
         };
     }
@@ -100,28 +100,46 @@ class GameService {
             return false;
         }
 
-        if (route[0] !== activeGame.startStationId || route[route.length - 1] !== activeGame.endStationId) {
+        const firstSegment = route[0];
+        if (firstSegment.station1_id !== activeGame.startStationId && firstSegment.station2_id !== activeGame.startStationId) {
+            return false;
+        }
+
+        const lastSegment = route[route.length - 1];
+        if (lastSegment.station1_id !== activeGame.endStationId && lastSegment.station2_id !== activeGame.endStationId) {
             return false;
         }
 
         const visitedSegments = new Set();
-        for (let i = 0; i < route.length - 1; i++) {
-            const currentStationId = route[i];
-            const nextStationId = route[i + 1];
-            const segment = segments.find(s => {
-                return (s.station1_id === currentStationId && s.station2_id === nextStationId) ||
-                    (s.station1_id === nextStationId && s.station2_id === currentStationId);
-            })
-            
-            if (!segment) {
+        let currentStationId = activeGame.startStationId;
+
+        for (let i = 0; i < route.length; i++) {
+            const segment = route[i];
+
+            const validSegment = segments.find(s => 
+                (s.station1_id === segment.station1_id || s.station1_id === segment.station2_id) &&
+                (s.station2_id === segment.station1_id || s.station2_id === segment.station2_id)
+            )
+
+            if (!validSegment) {
                 return false;
             }
 
-            const segmentKey = `${Math.min(currentStationId, nextStationId)}-${Math.max(currentStationId, nextStationId)}`;
+            if (segment.station1_id !== currentStationId && segment.station2_id !== currentStationId) {
+                return false;
+            }
+
+            const segmentKey = `${Math.min(segment.station1_id, segment.station2_id)}-${Math.max(segment.station1_id, segment.station2_id)}`;
             if (visitedSegments.has(segmentKey)) {
                 return false;
             }
             visitedSegments.add(segmentKey);
+
+            if (segment.station1_id === currentStationId) {
+                currentStationId = segment.station2_id
+            } else {
+                currentStationId = segment.station1_id
+            }
         }
 
         return true;

@@ -30,7 +30,8 @@ class Game {
         this.createdAt = createdAt ? dayjs(createdAt).toISOString() : dayjs().toISOString();
     }
 
-    invalidate() {
+    invalidate(route) {
+        this.route = typeof route === "string" ? JSON.parse(route) : route;
         this.status = GameStatus.LOST;
         this.coins = 0;
     }

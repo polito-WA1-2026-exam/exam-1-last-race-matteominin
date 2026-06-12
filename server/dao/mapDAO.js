@@ -29,7 +29,7 @@ const rowsToMap = (rows) => {
             linesMap.set(row.line_id, new Line(row.line_id, row.line_name));
         }
 
-        segmentsList.push(new Segment(row.id, row.stat1_id, row.stat2_id, row.line_id));
+        segmentsList.push(new Segment(row.segment_id, row.stat1_id, row.stat2_id, row.line_id));
     })
 
     return {
