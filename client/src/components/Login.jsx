@@ -89,7 +89,11 @@ const Login = () => {
                 )}
             </Button>
 
-            {error && <div className="text-danger mt-2">{error}</div>}
+            {error && (
+                <Row className="justify-content-center mt-2">
+                    <p className="text-danger">Error: {error}</p>
+                </Row>
+            )}
         </Form>
     );
 }

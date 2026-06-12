@@ -13,19 +13,22 @@ const router = express.Router();
 const gameDAO = new GameDAO();
 const gameService = new GameService(gameDAO, new MapDAO(), new EventDAO());
 
+
 router.post("/", authMiddleware, async (req, res) => {
-    const game = await gameService.startNewGame(req.user.id);
-    res.status(201).json(game);
-});
+    const game = await gameService.createGame(req.user.id);
+    res.json(game);
+})
 
 router.get("/current", authMiddleware, async (req, res) => {
-    const activeGame = await gameDAO.getActiveGameByPlayerId(req.user.id);
+    const game = await gameService.getGame(req.user.id);
+    res.json(game);
+})
 
-    if(!activeGame) {
-        throw new ApiException(404, "Player doesn't have any active game");
-    }
-
-    res.json(activeGame);
+router.put("/:id/start", authMiddleware, async (req, res) => {
+    const { id: gameId } = req.params;
+    const { id: userId } = req.user;
+    const updatedGame = await gameService.startGame(userId, gameId);
+    res.json(updatedGame);
 })
 
 router.put("/current", authMiddleware, async (req, res) => {

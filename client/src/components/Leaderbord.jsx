@@ -4,12 +4,11 @@ import { Container, Table, Spinner, Row, Alert } from "react-bootstrap";
 
 const Leaderboard = () => {
     const [leaderboard, setLeaderboard] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
-            setLoading(true);
             try {
                 const data = await leaderboardAPI.getLeaderboard();
                 setLeaderboard(data);

@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import ApiException from "../models/ApiException.js";
 import Game from "../models/Game.js";
 import { calculateDistance } from "../utils/graphUtils.js";
@@ -9,7 +10,7 @@ class GameService {
         this.eventDAO = eventDAO;
     }
 
-    async startNewGame(playerId) {
+    async createGame(playerId) {
         const activeGame = await this.gameDAO.getActiveGameByPlayerId(playerId);
 
         if (activeGame) {
@@ -25,8 +26,28 @@ class GameService {
             endStationId: station2.id
         });
 
-        const newGame = await this.gameDAO.createGame(game);
-        return newGame;
+        return await this.gameDAO.createGame(game);
+    }
+
+    async getGame(playerId) {
+        const activeGame = await this.gameDAO.getActiveGameByPlayerId(playerId);
+
+        if (!activeGame) {
+            throw new ApiException(404, "The player doesn't have any active game");
+        }
+
+        return activeGame;;
+    }
+
+    async startGame(userId, gameId) {
+        const timestamp = dayjs().toISOString();
+        const updatedGame = await this.gameDAO.startGame(userId, gameId, timestamp);
+
+        if (!updatedGame) {
+            throw new Error("Game not found or could not be started");
+        }
+
+        return updatedGame;
     }
 
     _getRandomStations(map) {
@@ -61,7 +82,7 @@ class GameService {
         let steps = [];
         const events = await this.eventDAO.getEvents();
         if (isValidRoute) {
-            steps = await this._executeRoute(activeGame, route, events);
+            steps = this._executeRoute(activeGame, route, events);
             activeGame.finalizeScore(route);
         } else {
             activeGame.invalidate();
@@ -106,7 +127,7 @@ class GameService {
         return true;
     }
 
-    async _executeRoute(activeGame, route, events) {
+    _executeRoute(activeGame, route, events) {
         const steps = [];
 
         for (let i = 0; i < route.length - 1; i++) {

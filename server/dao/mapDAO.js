@@ -80,6 +80,7 @@ class MapDAO {
 
             db.all(query, (err, rows) => {
                 if (err) return reject(err);
+                if (!rows) return null;
                 resolve(rowsToMap(rows));
             })
         })

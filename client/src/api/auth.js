@@ -6,10 +6,11 @@ const login = async (username, password) => {
         body: JSON.stringify({ username, password })
     });
         
+    if (response.status === 401) {
+        throw new Error("Invalid username or password");
+    }
+    
     if (!response.ok) {
-        if (response.status === 401) {
-            throw new Error("Invalid username or password");
-        }
         throw new Error("Unknown error (status " + response.status + ")");
     }
 
@@ -26,14 +27,13 @@ const logout = async () => {
     }
 }
 
+// TODO: fix auth error in console
 const getCurrentSession = async () => {
     const response = await client.request('/sessions/current');
 
     if (!response.ok) {
-        if (response.status === 401) {
-            throw new Error("No active session");
-        }
-        throw new Error("Unknown error (status " + response.status + ")");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Unknown error (status " + response.status + ")");
     }
 
     return await response.json();

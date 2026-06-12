@@ -1,13 +1,25 @@
+import { useState } from 'react';
 import { Container, Row, Col, Card, Button, ListGroup } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router';
+import { gameAPI } from '../api/index.js';
 import useAuth from '../hooks/useAuth.js';
 
 const Home = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const { user } = useAuth();
     const navigate = useNavigate();
 
-    const handleStartGame = () => {
-        navigate('/game');
+    const handleStartGame = async () => {
+        setLoading(true);
+        try {
+            await gameAPI.create();
+            navigate('/game');
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -66,10 +78,17 @@ const Home = () => {
                             size="lg" 
                             onClick={handleStartGame} 
                             className="fw-bold py-3"
+                            disabled={loading}
                         >
-                            Start New Game
+                            {loading ? 'Loading...' : 'Start Game'}
                         </Button>
                     </Row>
+            )}
+
+            {error && (
+                <Row className="justify-content-center">
+                    <p className="text-danger">Error: {error}</p>
+                </Row>
             )}
         </Container>
     );

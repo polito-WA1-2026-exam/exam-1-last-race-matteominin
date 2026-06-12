@@ -12,12 +12,13 @@ class GameDAO {
                     end_station_id, 
                     coins, 
                     route, 
-                    date
+                    started_at,
+                    created_at
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?);
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?);
             `;
 
-            const {status, playerId, startStationId, endStationId, coins, route, date} = game;
+            const {status, playerId, startStationId, endStationId, coins, route, startedAt, createdAt} = game;
 
             db.run(query, 
                 [
@@ -27,16 +28,52 @@ class GameDAO {
                     endStationId,
                     coins,
                     route,
-                    date
+                    startedAt,
+                    createdAt
                 ], function (err) {
                 if (err) return reject(err);
                 game.id = this.lastID;
-
                 resolve(game);
             })
         });
     }
 
+    startGame(userId, gameId, startedAt) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                UPDATE games
+                SET started_at = ?, status = ?
+                WHERE id = ? AND player_id = ?
+            `;
+
+            db.run(query, [startedAt, GameStatus.STARTED, gameId, userId], function (err) {
+                if (err) return reject(err);
+                    
+                const selectQuery = "SELECT * FROM games WHERE id = ? AND player_id = ?;";
+            
+                db.get(selectQuery, [gameId, userId], (err, row) => {
+                    if (err) return reject(err);
+                    if (!row) return resolve(null);
+
+                    const updatedGame = new Game({
+                        id: row.id,
+                        status: row.status,
+                        playerId: row.player_id,
+                        startStationId: row.start_station_id,
+                        endStationId: row.end_station_id,
+                        coins: row.coins,
+                        route: row.route,
+                        startedAt: row.started_at,
+                        createdAt: row.created_at
+                    });
+
+                    resolve(updatedGame);
+                })
+            })
+        })
+    }
+
+    // TODO: reduce input params
     updateGame(game) {
         return new Promise((resolve, reject) => {
             const query = `
@@ -58,10 +95,10 @@ class GameDAO {
         return new Promise((resolve, reject) => {
             const query = `
                 SELECT * FROM games
-                WHERE player_id = ? AND status = ?;
+                WHERE player_id = ? AND status IN (?, ?);
             `;
 
-            db.get(query, [playerId, GameStatus.STARTED], (err, row) => {
+            db.get(query, [playerId, GameStatus.SETUP, GameStatus.STARTED], (err, row) => {
                 if (err) return reject(err);
                 if (!row) return resolve(null);
 
@@ -73,7 +110,8 @@ class GameDAO {
                     endStationId: row.end_station_id,
                     coins: row.coins,
                     route: row.route,
-                    date: row.date
+                    startedAt: row.started_at,
+                    createdAt: row.created_at
                 });
 
                 resolve(game);
