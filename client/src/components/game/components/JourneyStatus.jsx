@@ -22,7 +22,13 @@ const JourneyStatus = ({
 
     if (isFinished && gameStatus === 'LOST') {
         return (
-            <p>lost</p>
+            <Row className="text-center w-100 py-5">
+                <i className="bi bi-exclamation-triangle-fill text-danger display-3 d-block mb-3"></i>
+                <h3 className="fw-bold text-danger">Journey Not Completed</h3>
+                <p className="text-muted mb-0">
+                    The train ran out of coins or took an invalid path before reaching the final station.
+                </p>
+            </Row>
         )
     }
 
