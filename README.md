@@ -3,9 +3,11 @@
 
 ## React Client Application Routes
 
-- Route `/`: page content and purpose
-- Route `/something/:param`: page content and purpose, param specification
-- ...
+- Route `/`: Home page with game instructions and a start game button available to authenticated users.
+- Route `/login`: Login page for users.
+- Route `/game`: Main game page used for setup, planning, execution, and result phases.
+- Route `/leaderboard`: Global ranking page for authenticated users.
+- Route `*`: Not found page.
 
 ## API Server
 
@@ -17,18 +19,19 @@
   - returns `201` on successful authentication
 
 - GET `/api/v1/sessions/current`
-  - returns the authenticated user's session info
+  - returns the authenticated user associated to the current session
   - response: `{ id, username }`
   - requires authentication, returns `401` if not authenticated
 
 - DELETE `/api/v1/sessions/current`
-  - logs out the current session
+  - deletes the current session
   - response: empty body
 
 - GET `/api/v1/map`
   - returns map data for the game
   - response: `{ lines, stations, segments }`
-  - requires authentication, returns `401` if not authenticated
+  - requires authentication, returns `401` if not authenticated 
+  - return `500` if can't featch the map
 
 - POST `/api/v1/games`
   - starts a new game for the authenticated player
@@ -42,15 +45,21 @@
   - requires authentication, returns `401` if not authenticated
   - returns `404` if no active game exists
 
+- PUT `/api/v1/games/:id/start`
+  - starts the specified active game and sets `started_at`
+  - response: updated game object
+  - requires authentication, returns `401` if not authenticated
+
 - PUT `/api/v1/games/current`
-  - updates the authenticated player's current game
-  - request body: `{ route }`
-  - response: updated game result
+  - updates the authenticated player's current game with the submitted route
+  - request body: route array of selected segments
+  - response: updated game result including execution steps `{...game, steps}`
   - requires authentication, returns `401` if not authenticated
 
 - GET `/api/v1/leaderboard`
   - returns the leaderboard of top players
   - response: array of `{ username, record }`
+  - requires authentication, returns `401` if not authenticated
 
 ## Database Tables
 
@@ -59,15 +68,20 @@
 - Table `stations` - contains `id`, `name`
 - Table `segments` - contains `id`, `station1_id`, `station2_id`, `line_id`
 - Table `events` - contains `id`, `name`, `description`, `effect`
-- Table `games` - contains `id`, `status`, `player_id`, `start_station_id`, `end_station_id`, `coins`, `route`, `date`
+- Table `games` - contains `id`, `player_id`, `status`, `start_station_id`, `end_station_id`, `coins`, `route`, `started_at`, `created_at`
 
 ## Main React Components
 
-- `ListOfSomething` (in `List.js`): component purpose and main functionality
-- `GreatButton` (in `GreatButton.js`): component purpose and main functionality
-- ...
-
-(only _main_ components, minor ones may be skipped)
+- `App` (in `App.jsx`): Defines client-side routing and protected routes.
+- `Home` (in `Home.jsx`): Displays game instructions and the start game button.
+- `Login` (in `Login.jsx`): Handles user login.
+- `Layout` (in `Layout.jsx`): Page layout with header and footer.
+- `ProtectedRoute` (in `ProtectedRoute.jsx`): Restricts access to authenticated users.
+- `Leaderbord` (in `Leaderbord.jsx`): Shows the global leaderboard.
+- `Game` (in `Game.jsx`): Orchestrates game phases.
+- `GameSetup` (in `GameSetup.jsx`): Shows the full network map and allows the user to begin the game.
+- `GamePlanning` (in `GamePlanning.jsx`): Planning phase (timed 90 seconds), shows the list of segments and allows route creation.
+- `GameResults` (in `GameResults.jsx`): Displays final score and game result after route execution.
 
 ## Screenshot
 
