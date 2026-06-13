@@ -4,7 +4,6 @@ import { Container, Image, Col, Spinner } from 'react-bootstrap';
 import { gameAPI } from '../../api/index.js';
 import GameSetup from './GameSetup.jsx';
 import GamePlanning from './GamePlanning.jsx';
-import GameExecution from './GameExecution.jsx';
 import GameResults from './GameResults.jsx';
 
 const Game = () => {

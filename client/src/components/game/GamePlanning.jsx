@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Container, Button, Col, Card, Badge, Row, Image} from 'react-bootstrap';
 import AvailableConnections from './components/AvailableConnections.jsx';
 import SelectedRoute from './components/SelectedRoute.jsx'
-import mapImg from '../../assets/map2.jpg';
+import mapImg from '../../assets/map_no_segments.jpg';
 
 const GamePlanning = ({game, map, submitRoute, getStationName}) => {
     const timeLimit = 90; 
