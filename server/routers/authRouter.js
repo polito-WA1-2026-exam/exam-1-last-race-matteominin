@@ -1,6 +1,7 @@
 import express from "express";
 import passport from "passport";
 import ApiException from "../models/ApiException.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/", passport.authenticate("local"), (req, res) => {
@@ -10,11 +11,7 @@ router.post("/", passport.authenticate("local"), (req, res) => {
     });
 })
 
-router.get("/current", (req, res) => {
-    if (!req.isAuthenticated()) {
-        throw new ApiException(401, "Not authenticated");
-    } 
-    
+router.get("/current", authMiddleware, (req, res) => {
     res.json({
         "id": req.user.id,
         "username": req.user.username
