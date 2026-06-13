@@ -1,11 +1,12 @@
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { Container, Button, Col, Card, Badge, Row} from 'react-bootstrap';
+import { Container, Button, Col, Card, Badge, Row, Image} from 'react-bootstrap';
 import AvailableConnections from './components/AvailableConnections.jsx';
 import SelectedRoute from './components/SelectedRoute.jsx'
+import mapImg from '../../assets/map2.jpg';
 
 const GamePlanning = ({game, map, submitRoute}) => {
-    const timeLimit = 100000; 
+    const timeLimit = 90; 
 
     const [timeLeft, setTimeLeft] = useState(() => {
         const now = dayjs();
@@ -97,8 +98,15 @@ const GamePlanning = ({game, map, submitRoute}) => {
                 </div>
             </Card>
 
+            <Image 
+                src={mapImg} 
+                alt="Network Map without segments"  
+                thumbnail
+                className="mb-4"
+                style={{ maxHeight: '40vh', objectFit: 'contain' }}
+            />
+
             <Row className="g-4 mb-4">
-    
                 <Col md={6}>
                     <AvailableConnections 
                         map={map} 
@@ -109,7 +117,6 @@ const GamePlanning = ({game, map, submitRoute}) => {
                         addSegment={addSegment}
                     />
                 </Col>
-
 
                 <Col md={6}>
                     <SelectedRoute 

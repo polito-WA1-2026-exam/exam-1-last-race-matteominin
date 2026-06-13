@@ -74,18 +74,22 @@ class GameService {
             throw new ApiException(404, "Player doesn't have any active game");
         }
 
-        // TODO: check submission time
+        const isTimeValid = this._isTimeValid(activeGame.startedAt);
 
-        const map = await this.mapDAO.getMap();
-        const isValidRoute = this._isRouteValid(activeGame, route, map.segments);
-        
         let steps = [];
-        const events = await this.eventDAO.getEvents();
-        if (isValidRoute) {
-            steps = this._executeRoute(activeGame, route, events);
-            activeGame.finalizeScore(route);
-        } else {
+        if (!isTimeValid) {
             activeGame.invalidate(route);
+        } else {
+            const map = await this.mapDAO.getMap();
+            const isValidRoute = this._isRouteValid(activeGame, route, map.segments);
+            
+            const events = await this.eventDAO.getEvents();
+            if (isValidRoute) {
+                steps = this._executeRoute(activeGame, route, events);
+                activeGame.finalizeScore(route);
+            } else {
+                activeGame.invalidate(route);
+            }
         }
     
         const updatedGame = await this.gameDAO.updateGame(activeGame);
@@ -93,6 +97,18 @@ class GameService {
             ...updatedGame,
             steps
         };
+    }
+
+    _isTimeValid(startTime) {
+        const now = dayjs();
+        const start = dayjs(startTime);
+        const elapsedSeconds = now.diff(start, 'second');
+        
+        if (elapsedSeconds > 90 + 3) { 
+            return false;
+        }
+
+        return true;
     }
 
     _isRouteValid(activeGame, route, segments) {

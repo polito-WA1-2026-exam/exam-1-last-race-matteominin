@@ -89,13 +89,7 @@ const Game = () => {
             submitRoute={submitRoute}   
         />;
     } else if (gameData.status === 'WON' || gameData.status === 'LOST') {
-        return <GameResults />;
-    } else {
-        return (
-            <Container className="text-center mt-5">
-                <p className="text-danger">Unknown game status: {gameData.status}</p>
-            </Container>
-        );
+        return <GameResults game={gameData} map={mapData} />;
     }
 }
 
