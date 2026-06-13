@@ -5,7 +5,7 @@ import AvailableConnections from './components/AvailableConnections.jsx';
 import SelectedRoute from './components/SelectedRoute.jsx'
 import mapImg from '../../assets/map2.jpg';
 
-const GamePlanning = ({game, map, submitRoute}) => {
+const GamePlanning = ({game, map, submitRoute, getStationName}) => {
     const timeLimit = 90; 
 
     const [timeLeft, setTimeLeft] = useState(() => {
@@ -41,11 +41,6 @@ const GamePlanning = ({game, map, submitRoute}) => {
             submitRoute(selectedSegments);
         }
     }, [timeLeft])
-
-    const getStationName = (id, stations) => {
-        const station = stations.find(s => s.id === id);
-        return station.name;
-    }
 
     const getLineName = (lineId) => {
         const line = map.lines.find(l => l.id === lineId);

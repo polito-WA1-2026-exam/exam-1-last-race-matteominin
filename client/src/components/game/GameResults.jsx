@@ -1,9 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Badge, ListGroup } from "react-bootstrap"
+import JourneyStatus from "./components/JourneyStatus";
+import EventBanner from "./components/EventBanner";
+import HistoryBanner from "./components/HistoryBanner";
 
-const GameExecution = ({ game, map }) => {
-    const [coins, setCoins] = useState(game.coins);
-    const pastSteps = ["test"];
+const GameExecution = ({ game, map, getStationName }) => {
+    const [currentStepIndex, setCurrentStepIndex] = useState(0);
+
+    const steps = game.steps;
+    const isFinished = currentStepIndex >= steps.length;
+    const currentStep = !isFinished ? game.steps[currentStepIndex] : null;
+
+    useEffect(() => {
+        if (steps.length === 0) return;
+
+        const timer = setTimeout(() => {
+            if (currentStepIndex < steps.length) {
+                setCurrentStepIndex(currentStepIndex + 1);
+            }
+        }, 2000)
+
+        return () => clearTimeout(timer);
+    }, [currentStepIndex, steps.length])
+
+    let currentCoins = 20;
+    if (isFinished) {
+        currentCoins = game.coins;
+    } else {
+        if (currentStepIndex !== 0) {
+            currentCoins = steps[currentStepIndex - 1].coinsAfterStep;
+        }
+    }
+
+    const pastSteps = steps.slice(0, currentStepIndex);
+
     return (
         <Container>
             <Row className="text-center mt-4">
@@ -13,101 +43,25 @@ const GameExecution = ({ game, map }) => {
 
             <Row className="mt-4">
                 <Col sm={8}>
-                    <Row className="mb-4">
-                        <Card className="text-center px-0 border-primary">
-                            <Card.Header className="bg-primary text-white fw-bold">
-                                Current Journey Segment
-                            </Card.Header>
-                            <Card.Body className="d-flex justify-content-around">
-                                <div>
-                                    <small className="text-muted d-block fw-bold">FROM</small>
-                                    <Badge bg="dark" className="fs-5 px-4">First</Badge>
-                                </div>
-                                
-                                <div>
-                                    <i className="bi bi-train-front d-block display-6"></i>
-                                    <small>In transit...</small>
-                                </div>
-                                
-                                <div>
-                                    <small className="text-muted d-block fw-bold">TO</small>
-                                    <Badge bg="dark" className="fs-5 px-4">Second</Badge>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </Row>   
 
-                    <Row>
-                        <Card className="px-0">
-                            <Card.Header className="bg-warning fw-bold text-center">
-                                Unexpected Event Occurred!
-                            </Card.Header>
-                            <Card.Body className="py-4 text-start">
-                                <h5 className="text-dark fw-bold">
-                                    EVENT NAME
-                                </h5>
-                                <p className="text-muted">
-                                    eventDescription
-                                </p>
-                                <div>
-                                    <Badge className="me-2 fw-semibold">Effect: +4 Coins</Badge>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </Row>            
-                </Col>
+                    <JourneyStatus 
+                        isFinished={isFinished}
+                        gameStatus={game.status}
+                        currentStepIndex={currentStepIndex}
+                        currentStep={currentStep}
+                        totalSteps={steps.length}
+                        getStationName={getStationName}
+                    />
+
+                    <EventBanner currentStep={currentStep} />
+                </Col>      
 
                 <Col sm={4}>
-                    <Card className="text-center bg-dark text-white">
-                        <Card.Body>
-                            <h4 className="text-white fw-bold">CURRENT TOTAL</h4>
-                            <div className="display-2 fw-bold text-light">
-                                {coins} <span className="fs-4 text-warning">Coins</span>
-                            </div>
-                        </Card.Body>
-                    </Card>
-
-                    <Card className="mt-4">
-                        <Card.Header className="fw-bold text-secondary small text-uppercase">
-                            History
-                        </Card.Header>
-                        <Card.Body className="p-0" style={{ maxHeight: "35vh", overflowY: "auto" }}>
-                            {pastSteps.length === 0 ? (
-                                <div className="text-center text-muted p-3 small italic">
-                                    No segments completed yet.
-                                </div>
-                            ) : (
-                                <ListGroup variant="flush">
-                                    <ListGroup.Item className="px-3">
-                                        <div className="d-flex justify-content-between">
-                                            <span className="small text-secondary">
-                                                Prima <i class="bi bi-arrow-right-short"></i> Seconda
-                                            </span>
-                                            <Badge bg="danger">
-                                                +3
-                                            </Badge>
-                                        </div>
-                                        <small className="text-secondary">
-                                            eventName
-                                        </small>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item className="px-3">
-                                        <div className="d-flex justify-content-between">
-                                            <span className="small text-secondary">
-                                                Prima <i class="bi bi-arrow-right-short"></i> Seconda
-                                            </span>
-                                            <Badge bg="danger">
-                                                +3
-                                            </Badge>
-                                        </div>
-                                        <small className="text-secondary">
-                                            eventName
-                                        </small>
-                                    </ListGroup.Item>
-                                </ListGroup>
-                            )}
-                        </Card.Body>
-                    </Card>
+                    <HistoryBanner 
+                        currentCoins={currentCoins}
+                        pastSteps={pastSteps}
+                        getStationName={getStationName}
+                    />
                 </Col>
             </Row>
         </Container>

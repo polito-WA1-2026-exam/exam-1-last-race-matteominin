@@ -161,16 +161,16 @@ class GameService {
         return true;
     }
 
-    _executeRoute(activeGame, route, events) {
+    _executeRoute(activeGame, segments, events) {
         const steps = [];
 
-        for (let i = 0; i < route.length - 1; i++) {
+        for (let i = 0; i < segments.length; i++) {
             const event = events[Math.floor(Math.random() * events.length)];
             activeGame.coins += event.effect;
 
             steps.push({
-                fromStationId: route[i],
-                toStationId: route[i + 1],
+                fromStationId: segments[i].station1_id,
+                toStationId: segments[i].station2_id,
                 eventName: event.name,
                 eventDescription: event.description,
                 effect: event.effect,

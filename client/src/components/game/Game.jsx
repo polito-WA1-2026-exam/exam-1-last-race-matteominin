@@ -67,6 +67,11 @@ const Game = () => {
         }
     }
 
+    const getStationName = (id, stations) => {
+        const station = mapData.stations.find(s => s.id === id);
+        return station.name;
+    }
+
     if (!gameData) {
         return null; 
     }
@@ -86,10 +91,15 @@ const Game = () => {
         return <GamePlanning 
             game={gameData} 
             map={mapData} 
+            getStationName={getStationName}
             submitRoute={submitRoute}   
         />;
     } else if (gameData.status === 'WON' || gameData.status === 'LOST') {
-        return <GameResults game={gameData} map={mapData} />;
+        return <GameResults 
+            game={gameData} 
+            map={mapData} 
+            getStationName={getStationName}
+        />;
     }
 }
 
