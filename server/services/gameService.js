@@ -44,7 +44,7 @@ class GameService {
         const updatedGame = await this.gameDAO.startGame(userId, gameId, timestamp);
 
         if (!updatedGame) {
-            throw new Error("Game not found or could not be started");
+            throw new ApiException(404, "Game not found or already started");
         }
 
         return updatedGame;
