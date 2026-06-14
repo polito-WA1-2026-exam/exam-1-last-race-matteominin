@@ -85,13 +85,28 @@
 
 ## Screenshot
 
-![Screenshot](./img/screenshot.jpg)
+![home](./img/home.png)
+![login](./img/login.png)
+![setup](./img/setup.png)
+![planning](./img/planning.png)
+![execution](./img/execution.png)
+![won](./img/won.png)
+![lost](./img/lost.png)
+![leaderboard](./img/leaderboard.png)
 
 ## Users Credentials
 
-- username, password (plus any other requested info)
-- username, password (plus any other requested info)
+- local, local!
+- tourist, tourist!
+- teacher, teacher! (new account, no games played)
 
 ## Use of AI Tools
-Briefly describe whether you used any AI tools (e.g., ChatGPT, GitHub Copilot, Claude) while working on this project, for which purposes (e.g., clarifying concepts, debugging, generating code), and how you verified or adapted their output.
-If you did not use any AI tools, simply state so.
+AI tools have been used for the following purposes:
+
+- Image Generation (Gemini): AI tools were used to design and create the map assets.
+
+- Coding Assistance: GitHub Copilot was used during development for inline code suggestions.
+
+- Debugging & Architecture: Gemini was consulted to research best practices and troubleshoot non-trivial bugs.
+
+All AI-generated code was manually reviewed.
