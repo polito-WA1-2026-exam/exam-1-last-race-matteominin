@@ -60,9 +60,9 @@ const Leaderboard = () => {
                 </tbody>
             </Table>
             {error && (
-                <Row className="justify-content-center">
-                    <p className="text-danger">Error: {error}</p>
-                </Row>
+                <div className="alert alert-danger text-center p-2 mt-3 small" role="alert">
+                    <i className="bi bi-exclamation-triangle-fill me-2"></i>{error}
+                </div>
             )}
         </Container>
     );
