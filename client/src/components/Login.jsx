@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import useAuth from '../hooks/useAuth.js';
-import { Form, Button, Col, Row, Container, Spinner } from 'react-bootstrap';
+import { Form, Button, Container, Spinner, Card } from 'react-bootstrap';
 
 const Login = () => {
     const { login, loading } = useAuth();
@@ -19,7 +19,6 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const form = e.currentTarget;
 
         if (form.checkValidity() === false) {
@@ -38,63 +37,74 @@ const Login = () => {
     }
 
     return (
-        <Form noValidate validated={validated} onSubmit={handleSubmit}>
-            <Col className="mb-3">
-                <Form.Group as={Col} md="4" controlId="validationCustom01">
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control
-                        required
-                        type="text"
-                        placeholder="username"
-                        name="username"
-                        disabled={loading}
-                        value={credentials.username}
-                        onChange={handleChange}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                        Please provide a valid username.
-                    </Form.Control.Feedback>
-                </Form.Group>
+        <Container className="d-flex justify-content-center mt-5">
+            
+            <Card style={{ width: '100%', maxWidth: '400px' }}>
+                <Card.Header className="bg-primary text-white text-center fw-bold py-3 fs-5">
+                    <i className="bi bi-box-arrow-in-right me-2"></i>Sign In
+                </Card.Header>
                 
-                <Form.Group as={Col} md="4" controlId="validationCustom01">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                        required
-                        type="password"
-                        placeholder="Password"
-                        name="password"
-                        disabled={loading}
-                        value={credentials.password}
-                        onChange={handleChange}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                        Please provide a valid password.
-                    </Form.Control.Feedback>
-                </Form.Group>
-            </Col>
+                <Card.Body className="p-4">
+                    <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                        
+                        <Form.Group className="mb-3" controlId="validationCustom01">
+                            <Form.Label className="fw-semibold text-secondary">Username</Form.Label>
+                            <Form.Control
+                                required
+                                type="text"
+                                placeholder="Enter your username"
+                                name="username"
+                                disabled={loading}
+                                value={credentials.username}
+                                onChange={handleChange}
+                                className="py-2"
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please provide a valid username.
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        
+                        <Form.Group className="mb-4">
+                            <Form.Label className="fw-semibold text-secondary">Password</Form.Label>
+                            <Form.Control
+                                required
+                                type="password"
+                                placeholder="Enter your password"
+                                name="password"
+                                disabled={loading}
+                                value={credentials.password}
+                                onChange={handleChange}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                Please provide a valid password.
+                            </Form.Control.Feedback>
+                        </Form.Group>
 
-            <Button variant="primary" type="submit" disabled={loading}>
-                {loading ? (
-                    <>
-                        <Spinner 
-                            animation="border" 
-                            role="status"
-                            size="sm"
-                            className="me-2"
-                        />
-                        Logging in...
-                    </>
-                ) : (
-                    'Submit'
-                )}
-            </Button>
+                        <Button variant="primary" type="submit" className="w-100 fw-bold" disabled={loading}>
+                            {loading ? (
+                                <>
+                                    <Spinner 
+                                        animation="border" 
+                                        role="status"
+                                        size="sm"
+                                        className="me-2"
+                                    />
+                                    Logging in...
+                                </>
+                            ) : (
+                                'Login'
+                            )}
+                        </Button>
 
-            {error && (
-                <Row className="justify-content-center mt-2">
-                    <p className="text-danger">Error: {error}</p>
-                </Row>
-            )}
-        </Form>
+                        {error && (
+                            <div className="alert alert-danger text-center p-2 mt-3 small" role="alert">
+                                <i className="bi bi-exclamation-triangle-fill me-2"></i>{error}
+                            </div>
+                        )}
+                    </Form>
+                </Card.Body>
+            </Card>
+        </Container>
     );
 }
 
