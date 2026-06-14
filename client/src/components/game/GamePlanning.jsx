@@ -59,6 +59,30 @@ const GamePlanning = ({game, map, submitRoute, getStationName}) => {
         setSelectedSegments(prev => prev.filter(s => s.id !== segment.id));
     }
 
+    const getLineColor = (lineName) => {
+        let color;
+
+        switch (lineName.toLowerCase()) {
+            case 'red':
+                color = 'danger';
+                break;
+
+            case 'yellow':
+                color = 'warning';
+                break;
+            
+            case 'green':
+                color = 'success';
+                break;
+
+            case 'blue':
+                color = 'primary';
+                break;
+            
+            }
+        return color;
+    }
+
     return (
         <Container className="py-4 text-center">
             
@@ -89,7 +113,7 @@ const GamePlanning = ({game, map, submitRoute, getStationName}) => {
                 
                 <div>
                     <small className="text-muted d-block fw-bold">ARRIVAL</small>
-                    <Badge bg="danger" className="fs-5 px-4">{getStationName(game.endStationId, map.stations)}</Badge>
+                    <Badge bg="primary" className="fs-5 px-4">{getStationName(game.endStationId, map.stations)}</Badge>
                 </div>
             </Card>
 
@@ -110,6 +134,7 @@ const GamePlanning = ({game, map, submitRoute, getStationName}) => {
                         getLineName={getLineName}
                         timeLeft={timeLeft}
                         addSegment={addSegment}
+                        getLineColor={getLineColor}
                     />
                 </Col>
 
@@ -121,6 +146,7 @@ const GamePlanning = ({game, map, submitRoute, getStationName}) => {
                         getLineName={getLineName}
                         timeLeft={timeLeft}
                         removeSegment={removeSegment}
+                        getLineColor={getLineColor}
                     />
                 </Col>
             </Row>

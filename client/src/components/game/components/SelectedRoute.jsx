@@ -1,6 +1,6 @@
 import { Card, ListGroup, Badge, Button } from "react-bootstrap";
 
-const SelectedRoute = ({ map, selectedSegments, getStationName, getLineName, timeLeft, removeSegment}) => {
+const SelectedRoute = ({ map, selectedSegments, getStationName, getLineName, timeLeft, removeSegment, getLineColor}) => {
     return (
         <Card className="h-100">
             <Card.Header className="bg-primary text-white fw-bold">
@@ -16,9 +16,6 @@ const SelectedRoute = ({ map, selectedSegments, getStationName, getLineName, tim
                             {selectedSegments.map((segment, idx) => {
                                 const lineName = getLineName(segment.line_id);
 
-                                // TODO: change color
-                                const badgeColor = lineName.toLowerCase() === 'rossa' ? 'danger' : 
-                                                lineName.toLowerCase() === 'gialla' ? 'warning text-dark' : 'secondary'; 
                                 return (
                                     <ListGroup.Item 
                                         key={idx}
@@ -30,7 +27,7 @@ const SelectedRoute = ({ map, selectedSegments, getStationName, getLineName, tim
                                                 <span className="fw-bold">
                                                     {getStationName(segment.station1_id, map.stations)} — {getStationName(segment.station2_id, map.stations)}
                                                 </span>
-                                                <Badge bg={badgeColor}>
+                                                <Badge bg={getLineColor(lineName)}>
                                                     {lineName} Line
                                                 </Badge>
                                             </div>

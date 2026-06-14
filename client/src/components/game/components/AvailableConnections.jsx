@@ -1,6 +1,7 @@
 import { Card, ListGroup, Badge } from "react-bootstrap";
 
-const AvailableConnections = ({ map, selectedSegments, getStationName, getLineName, timeLeft, addSegment}) => {
+// TODO: shuffle segments
+const AvailableConnections = ({ map, selectedSegments, getStationName, getLineName, timeLeft, addSegment, getLineColor}) => {
     return (
         <Card>
             <Card.Header className="bg-primary text-white fw-bold">
@@ -10,14 +11,10 @@ const AvailableConnections = ({ map, selectedSegments, getStationName, getLineNa
                 <ListGroup>
                     {map.segments?.map((segment, index) => {
                         const isSelected = selectedSegments.some(
-                            s => s.station1_id === segment.station1_id && s.station2_id === segment.station2_id
+                            s => s.station1_id === segment.station1_id && s.station2_id === segment.station2_id && s.line_id === segment.line_id
                         );
                         
                         const lineName = getLineName(segment.line_id);
-
-                        // TODO: change color
-                        const badgeColor = lineName.toLowerCase() === 'rossa' ? 'danger' : 
-                                           lineName.toLowerCase() === 'gialla' ? 'warning text-dark' : 'secondary';
 
                         return (
                             <ListGroup.Item 
@@ -33,7 +30,7 @@ const AvailableConnections = ({ map, selectedSegments, getStationName, getLineNa
                                         {getStationName(segment.station1_id, map.stations)} — {getStationName(segment.station2_id, map.stations)}
                                     </span>
 
-                                    <Badge bg={badgeColor}>
+                                    <Badge bg={getLineColor(lineName)}>
                                         {lineName} Line
                                     </Badge>
                                 </div>

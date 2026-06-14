@@ -145,7 +145,7 @@ class GameService {
                 return false;
             }
 
-            const segmentKey = `${Math.min(segment.station1_id, segment.station2_id)}-${Math.max(segment.station1_id, segment.station2_id)}`;
+            const segmentKey = `${Math.min(segment.station1_id, segment.station2_id)}-${Math.max(segment.station1_id, segment.station2_id)}-${segment.line_id}`;
             if (visitedSegments.has(segmentKey)) {
                 return false;
             }
